@@ -43,7 +43,7 @@ export function AuthForm({ className, ...props }) {
         const res = await loginWithEmail(formData.usernameOrEmail, formData.password)
         if (res.status === 200) {
           // Store the token from x-authorization header
-          const token = res.headers['x-authorization']
+          const token = res.data.accessToken  
           setToken(token)
           toast.success("Login successful!")
           navigate('/dashboard')
@@ -56,7 +56,7 @@ export function AuthForm({ className, ...props }) {
           formData.confirmPassword
         )
         if (res.status === 200) {
-          const token = res.headers['x-authorization']
+          const token = res.data.accessToken  
           setToken(token)
           toast.success("Account created successfully!")
           navigate('/dashboard')
