@@ -13,8 +13,11 @@ import { useState } from "react"
 import { loginWithEmail, registerUser, forgotPassword } from "../service/authService"
 import { toast } from "sonner"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { useNavigate } from 'react-router-dom'
+import { setToken } from '../utils/auth'
 
 export function AuthForm({ className, ...props }) {
+  const navigate = useNavigate()
   const [isLogin, setIsLogin] = useState(true)
   const [formData, setFormData] = useState({
     email: "",
@@ -39,7 +42,11 @@ export function AuthForm({ className, ...props }) {
       if (isLogin) {
         const res = await loginWithEmail(formData.usernameOrEmail, formData.password)
         if (res.status === 200) {
+          // Store the token from x-authorization header
+          const token = res.headers['x-authorization']
+          setToken(token)
           toast.success("Login successful!")
+          navigate('/dashboard')
         }
       } else {
         const res = await registerUser(
@@ -49,8 +56,10 @@ export function AuthForm({ className, ...props }) {
           formData.confirmPassword
         )
         if (res.status === 200) {
+          const token = res.headers['x-authorization']
+          setToken(token)
           toast.success("Account created successfully!")
-          setIsLogin(true)
+          navigate('/dashboard')
         }
       }
     } catch (err) {
@@ -59,7 +68,7 @@ export function AuthForm({ className, ...props }) {
         : isLogin
           ? "Login failed. Please check your credentials."
           : "Signup failed. Please try again."
-      toast.error(err.message || errorMessage);
+      toast.error(err.message || errorMessage)
     }
   }
 
