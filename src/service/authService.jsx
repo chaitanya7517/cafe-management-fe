@@ -56,3 +56,14 @@ export const resetPassword = async (token, newPassword, confirmPassword) => {
     throw new Error(error.response?.data?.message || "Failed to reset password")
   }
 }
+
+export const loginWithGoogle = async (credential) => {
+  try {
+    const res = await axios.post('http://localhost:8080/auth/google/login', {
+      credential: credential
+    })
+    return res
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Google login failed")
+  }
+}
